@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Pete's Pet Shop</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-push-2">
+          <h1 class="text-center">Pete's Pet Shop</h1>
+          <hr/>
+          <br/>
+        </div>
+      </div>
+
+    
+
+      <!-- ADD button to filter  -->
+
+      <div class="row">
+        <form>
+            <label>Breed</label>
+            <select id="selectedBreed">
+            <option value="all">All</option>
+            <option value="Scottish Terrier">Scottish Terrier</option>
+            <option value="French Bulldog">French Bulldog</option>
+            <option value="Boxer">Boxer</option>
+            <option value="Golden Retriever">Golden Retriever</option>
+            </select>
+
+            <label>Age</label>
+            <select id="selectedAge">
+            <option value="all">All</option>
+            <option value=2>2</option>
+            <option value=3>3</option>
+            <option value=4>4</option>
+            </select>
+
+            <label>Adoptable only</label>
+
+            <style>
+              /* The switch - the box around the slider */
+              .switch {
+                position: relative;
+                display: inline-block;
+                width: 46px;
+                height: 26px;
+              }
+
+              /* Hide default HTML checkbox */
+              .switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+              }
+
+              /* The slider */
+              .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                -webkit-transition: .4s;
+                transition: .4s;
+              }
+
+              .slider:before {
+                position: absolute;
+                content: "";
+                height: 20px;
+                width: 20px;
+                left: 3px;
+                bottom: 3px;
+                background-color: white;
+                -webkit-transition: .3s;
+                transition: .3s;
+              }
+
+              input:checked + .slider {
+                background-color: #2196F3;
+              }
+
+              input:focus + .slider {
+                box-shadow: 0 0 1px #2196F3;
+              }
+
+              input:checked + .slider:before {
+                -webkit-transform: translateX(20px);
+                -ms-transform: translateX(20px);
+                transform: translateX(20px);
+              }
+
+              /* Rounded sliders */
+              .slider.round {
+                border-radius: 70px;
+              }
+
+              .slider.round:before {
+                border-radius: 50%;
+              }
+            </style>
+
+            <label class="switch">
+              <input id="toggleswitch" type="checkbox">
+              <span class="slider round"></span>
+            </label>
+
+            <input type="button" id="PetFilter" value="Filter" />
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+            <script type="text/javascript">
+              $(function () {
+                  $("#PetFilter").bind("click", function () {
+                    document.getElementById('searchbar').value = "";
+                      App.Filter()
+                  });
+              });
+            </script>
+
+            <button type="button, reset" id="PetReset">Reset</button>
+
+        </form>
+        <br>
+
+      </div>
+      
+      <!-- ADD button to search -->
+      <div class="row">
+        <form id = "search_form">
+            <label>Search</label>
+
+            <input type="text" id="searchbar" autocomplete="off" placeholder="Name or Location">
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+            <script type="text/javascript">
+              $(window).ready(function() {
+              $("#search_form").on("keypress", function (event) {
+                  var keyPressed = event.keyCode || event.which;
+                  if (keyPressed === 13) {
+                      event.preventDefault();
+                      $("#selectedBreed")[0].selectedIndex = 0;
+                      $("#selectedAge")[0].selectedIndex = 0;
+                      App.Search()
+                  }
+              });
+              });
+            </script>
+
+            <button type="button" id="PetSearch" value="Search">Search</button>
+            <script type="text/javascript">
+              $("#PetSearch").bind("click", function () {
+                  $("#selectedBreed")[0].selectedIndex = 0;
+                  $("#selectedAge")[0].selectedIndex = 0;
+                  App.Search()
+              });
+            </script>
+
+
+          </form>
+          <br>
+
+      </div>
+      <hr/>
+      <br/>
+
+
+      <!-- ADD button to show adoption history -->
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-push-2">
+            <b>Adoption History</b>
+            <form onSubmit="App.historyAdoption(); return false;">
+              <button type="submit" class="btn btn-primary">View Adoption History</button>
+              <hr />
+            </form>
+            <p id="adoptionHistory" class="text-center"></p>
+        </div>
+      </div>
+
+
+      <!-- ADD button to show vaccination history -->
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-push-2">
+            <b>Vaccination History</b>
+            <form onSubmit="App.historyVaccinations(); return false;">
+              <button type="submit" class="btn btn-primary btn-vachistory">View Vaccination History</button>
+              <hr />
+            </form>
+            <p id="vaccinationHistory" class="text-center"></p>
+        </div>
+      </div>
+      <hr/>
+      <br/>
+
+
+      <div id="petsRow" class="row">
+        <!-- PETS LOAD HERE -->
+      </div>
+    </div>
+
+    <div id="petTemplate" style="display: none;">
+      <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="panel panel-default panel-pet">
+          <div class="panel-heading">
+            <h3 class="panel-title">Scrappy</h3>
+          </div>
+          <div class="panel-body">
+            <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%;" src="https://animalso.com/wp-content/uploads/2017/01/Golden-Retriever_6.jpg" data-holder-rendered="true">
+            <br/><br/>
+            <strong>Breed</strong>: <span class="pet-breed">Golden Retriever</span><br/>
+            <strong>Age</strong>: <span class="pet-age">3</span><br/>
+            <strong>Location</strong>: <span class="pet-location">Warren, MI</span><br/>
+            <!-- adding favorite counter -->
+            <strong>Favorite Counter (Unique Users)</strong>: <span class="pet-favorite">0</span><br/><br/>
+            <button class="btn btn-default btn-adopt" type="button" data-id="0">Adopt</button>
+            <!-- adding vaccinate button -->
+            <button class="btn btn-default btn-vaccinate" type="button" data-id="0">Vaccinate</button>
+            <!-- adding favorite button -->
+            <button class="btn btn-default btn-favorite" type="button" data-id="0">Favorite</button>
+            <!-- adding donate button and donate pop up window -->
+            <button class="btn btn-default btn-donate" type="button" data-id="0"
+                    onclick = "document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'"
+                    >Donate ETH to Pet</button>
+
+            <style>
+              .black_overlay{
+                  display: none;
+                  position: fixed;
+                  top: 0%;
+                  left: 0%;
+                  width: 100%;
+                  height: 100%;
+                  background-color: black;
+                  z-index:1001;
+                  -moz-opacity: 0.8;
+                  opacity:.80;
+                  filter: alpha(opacity=88);
+              }
+              .white_content {
+                  display: none;
+                  position: fixed;
+                  top: 30%;
+                  left: 30%;
+                  width: 40%;
+                  height: 40%;
+                  padding: 20px;
+                  border: 5px solid rgb(81, 206, 225);
+                  background-color: white;
+                  z-index:1002;
+                  overflow: auto;
+              }
+              .btn-donation {
+                  width: 100px;
+                  background-color: rgb(165, 233, 247);
+              }
+              .btn-dCancel {
+                width: 100px;
+                background-color: rgb(255, 240, 240);
+              }
+              </style>
+
+
+              <div id="light" class="white_content">
+
+                <div class="row">
+                <label>Chose your donation amount:
+                </label>
+                </div>
+
+                <div id="donation-btns" >
+
+                <button class="btn btn-donation btn-d1" type="button" data-id="0"  id = "btn-d1"
+                onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">1</button>
+                <script type="text/javascript">
+                  $("#btn-d1").bind("click", function () {
+                      App.donate_amount = 1
+                  });
+                </script>
+
+                <button class="btn btn-donation btn-d2" type="button" data-id="0" id = "btn-d2"
+                onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">2</button>
+                <script type="text/javascript">
+                  $("#btn-d2").bind("click", function () {
+                      App.donate_amount = 2
+                  });
+                </script>
+
+                <button class="btn btn-donation btn-d5" type="button" data-id="0" id = "btn-d5"
+                onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">5</button>
+                <script type="text/javascript">
+                  $("#btn-d5").bind("click", function () {
+                      App.donate_amount = 5
+                  });
+                </script>
+
+                <button class="btn btn-donation btn-d10" type="button" data-id="0" id = "btn-d10"
+                onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">10</button>
+                <script type="text/javascript">
+                  $("#btn-d10").bind("click", function () {
+                      App.donate_amount = 10
+                  });
+                </script>
+
+                <button class="btn btn-donation btn-d50" type="button" data-id="0" id = "btn-d50"
+                onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">50</button>
+                <script type="text/javascript">
+                  $("#btn-d50").bind("click", function () {
+                      App.donate_amount = 50
+                  });
+                </script>
+
+                <button class="btn btn-dCancel" type="button" data-id="0" id = "btn-dCancel"
+                onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">Cancel</button>
+
+
+                </div>
+              </div>
+
+
+              <div id="fade" class="black_overlay"></div>
+
+            <!-- ADD button to deadopt -->
+            <button class="btn btn-default btn-deadopt" type="button" data-id="0" disabled=true>Deadopt</button>
+           
+            <!-- ADD button/form to gift friend -->
+            <div class="row">
+              <div class="col-xs-12 col-sm-8 col-sm-push-2">
+                  <form >
+                    Type friend's address to give pet:
+                    <input class="text-center input-giftfriend" type="text" id="giftfriend">
+                    <button type="submit" class="btn btn-default btn-giftfriend" data-id="0" >Give to Friend</button>
+                    <hr />
+                  </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
